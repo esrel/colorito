@@ -25,7 +25,7 @@ class PaletteReader(object):
     @staticmethod
     def read_palette_from_csv(palette, sep=","):
         """
-        Returns a name-to-rgb dictionary for the palette.
+        Returns a text-to-rgb dictionary for the palette.
         :return: Dict<String, Tuple<Int, Int, Int>>.
         """
         palette = {}
