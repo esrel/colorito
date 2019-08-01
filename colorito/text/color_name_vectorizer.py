@@ -20,7 +20,7 @@ class ColorNameVectorizer(ABC):
         :param palette: dict<str, tup<int, int, int>>
                         color name to rgb map.
 
-        :return: vectorized colors of the palette.
+        :return: vectorized genies of the palette.
         """
         self.fit(palette)
         vectorized_colors = [

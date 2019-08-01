@@ -10,7 +10,7 @@ class PaletteReader(object):
 
     HEX_CC = re.compile(r"^#?\d{6}$")
     RGB_CC = re.compile(
-        r"^\(?\d{1-3}[,;\s]\d{1-3}[,;\s]\d{1-3}\)?$"
+        r"^\(?{1-3}[,;\s]\d{1-3}[,;\s]\d{1-3}\)?$"
     )
 
     def __init__(self):
@@ -23,13 +23,13 @@ class PaletteReader(object):
         return PaletteReader.read_palette_from_csv(palette)
 
     @staticmethod
-    def read_palette_from_csv(palette, sep=","):
+    def read_palette_from_csv(palette_f, sep=","):
         """
         Returns a text-to-rgb dictionary for the palette.
         :return: Dict<String, Tuple<Int, Int, Int>>.
         """
         palette = {}
-        with open(palette, 'r') as f:
+        with open(palette_f, 'r') as f:
             for line in filter(
                     lambda x: x,
                     f.read().split('\n')
@@ -38,7 +38,7 @@ class PaletteReader(object):
                 try:
                     palette[color] = PaletteReader.color_code_to_rgb(code)
                 except InvalidColorFormatException as e:
-                    logger.error(
+                    logger.warning(
                         f" {e.__str__}; color '{color}'' will be skipped."
                     )
 
@@ -67,7 +67,15 @@ class PaletteReader(object):
                     primary_color.group(0)
                 )
 
-            return tuple(rgb)
+            rgb = (
+                int(rgb[0]),
+                int(rgb[1]),
+                int(rgb[2])
+            )
+
+            PaletteReader.check_rgb_code(rgb)
+
+            return rgb
 
         else:
             raise InvalidColorFormatException(
@@ -76,3 +84,11 @@ class PaletteReader(object):
                     color_code
                 )
             )
+
+    @staticmethod
+    def check_rgb_code(rgb_code):
+        for component in rgb_code:
+            if 0 > component > 255:
+                raise InvalidColorFormatException(
+                    f'invalid rgb code: {rgb_code}'
+                )
