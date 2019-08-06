@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from sklearn.feature_extraction.text import CountVectorizer
 
 
 class ColorNameVectorizer(ABC):
@@ -17,8 +18,7 @@ class ColorNameVectorizer(ABC):
     def fit_transform(self, palette):
         """
         Vectorizes the color names in the palette.
-        :param palette: dict<str, tup<int, int, int>>
-                        color name to rgb map.
+        :param palette: list<str> colors' names.
 
         :return: vectorized genies of the palette.
         """
@@ -28,3 +28,19 @@ class ColorNameVectorizer(ABC):
             for color in palette
         ]
         return vectorized_colors
+
+
+class ColorNameCountVectorizer(ColorNameVectorizer):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.count_vect = CountVectorizer(**kwargs)
+
+    def fit(self, palette):
+        self.count_vect.fit(palette)
+
+    def transform(self, color_name):
+        if not isinstance(color_name, list):
+            color_name = [color_name]
+
+        return self.count_vect.transform(color_name)[0]

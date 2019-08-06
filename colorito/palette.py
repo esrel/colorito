@@ -3,6 +3,7 @@ from colorito.utils.logging import logger
 from colorito.exceptions import GeniePersistException, GenieLoadException
 
 import os
+import re
 import pickle
 
 from pickle import UnpicklingError
@@ -45,8 +46,17 @@ class SmartPalette(object):
         :param color:
         :return:
         """
-        return self.palette.get(color,
-                                self.genie.guess_color_rgb(color))
+        return self.palette.get(
+            color, {
+                re.sub(r'\s+', '', col): rgb
+                for col, rgb in self.palette
+                                    .items()
+            }.get(
+                re.sub(r'\s+', '', color),
+                self.genie
+                    .guess_color_rgb(color)
+            )
+        )
 
     def get_shades_of(self, color, as_rgb=False):
         """
@@ -58,14 +68,18 @@ class SmartPalette(object):
         :return:
         """
         if color in self.genie.color_to_cluster:
-            return [
-                self.get_color_rgb(c) if as_rgb else c
-                for c in self.genie.color_clusters[
+            color_cluster = self.genie.color_clusters[
                     self.genie.color_to_cluster[color]
-                ]
+            ]
+            return [
+                self.get_color_rgb(col) if as_rgb
+                else col for col in color_cluster
             ]
 
-        return self.genie.guess_shades_of(color)
+        return [
+            self.get_color_rgb(shade) if as_rgb else shade
+            for shade in self.genie.guess_shades_of(color)
+        ]
 
     def get_main_tint(self, color, as_rgb=False):
         """
@@ -75,17 +89,23 @@ class SmartPalette(object):
         :param as_rgb:
         :return:
         """
+        primary_rgbs = self.MAIN_TINTS.values()
         similarities = self.genie.compare(
             self.get_color_rgb(color),
-            [*self.MAIN_TINTS.values()]
+            primary_rgbs
         )
 
-        main_tint = sorted(similarities)[-1]
-
-        return (
-            self.get_color_rgb(main_tint) if
-            as_rgb else main_tint
+        tint_similarities = zip(
+            primary_rgbs if not as_rgb else [*self.MAIN_TINTS],
+            similarities
         )
+
+        main_tint = sorted(
+            tint_similarities,
+            key=lambda x: x[1]
+        )[-1][0]
+
+        return main_tint
 
     def put_color_into_cluster(self, color, cluster):
         """
@@ -245,7 +265,7 @@ class SmartPalette(object):
             )
         except GeniePersistException as e:
             logger.error(
-                f' failed to persist genie: {e.__str__}'
+                f' failed to persist genie: {e}'
             )
             return
 

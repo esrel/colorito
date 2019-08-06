@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from colorito.text.color_name_vectorizer import ColorNameVectorizer
+from colorito.text.color_name_vectorizer import ColorNameCountVectorizer
 from colorito.utils.logging import logger
 from colorito.exceptions import GenieLoadException, GeniePersistException, GenieDoesntKnowException
 
@@ -44,8 +44,7 @@ class AbstractColorGenie(ABC):
         )
         self.palette = palette
         if self.vectorizer:
-            self.vectorizer.fit(
-                [*self.palette])
+            self.vectorizer.fit([*self.palette])
 
         self.train_model()
         self.is_ready = True
@@ -105,10 +104,10 @@ class ColorGenie(AbstractColorGenie):
     VECTORIZER = 'vectorizer.pickle'
 
     def __init__(self):
-        super().__init__(color_name_vectorizer=ColorNameVectorizer)
+        super().__init__(color_name_vectorizer=ColorNameCountVectorizer())
 
     @classmethod
-    def name(self):
+    def name(cls):
         return 'color_genie'
 
     @classmethod
@@ -215,13 +214,32 @@ class ColorGenie(AbstractColorGenie):
         ]
 
     def guess_shades_of(self, color):
-        pass
+        color_rgb = self.guess_color_rgb(color)
+        comparing = {
+            color:
+                self.compare(
+                    color_rgb,
+                    [rgb]
+                )[0]
+
+            for color, rgb in self.palette
+                                  .items()
+        }
+
+        # return the 10 closest colors
+
+        return [
+            k for k, v in sorted(
+                comparing.items(),
+                key=lambda x: x[1]
+            )[:10]
+        ]
 
     def compare(self, color, colors):
         """
         Returns the delta-E between color
         and colors (these have to be pro-
-        vided as RGB triples.
+        vided as RGB triples).
         :param color:
         :param colors:
         :return:

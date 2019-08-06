@@ -8,7 +8,7 @@ class PaletteReader(object):
 
     # patterns for hexadecimal and rgb color codes
 
-    HEX_CC = re.compile(r"^#?\d{6}$")
+    HEX_CC = re.compile(r"^#?[0-9abcdef]{6}$")
     RGB_CC = re.compile(
         r"^\(?{1-3}[,;\s]\d{1-3}[,;\s]\d{1-3}\)?$"
     )
@@ -34,12 +34,12 @@ class PaletteReader(object):
                     lambda x: x,
                     f.read().split('\n')
             ):
-                color, code = line.strip().split(sep)
+                color, code = line.lower().strip().split(sep)
                 try:
                     palette[color] = PaletteReader.color_code_to_rgb(code)
                 except InvalidColorFormatException as e:
                     logger.warning(
-                        f" {e.__str__}; color '{color}'' will be skipped."
+                        f" {e}; color '{color}' will be skipped."
                     )
 
         return palette
