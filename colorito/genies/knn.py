@@ -230,10 +230,35 @@ class KNNColorGenie(ColorGenie):
         """
         try:
             ColorConverter.check_rgb_code(color)
-            color = {
+            memento = color
+            inverse_palette = {
                 v: k for k, v in self.palette
                                      .items()
-            }[color]
+            }
+
+            color = inverse_palette.get(color)
+            unknown_rgbs = {
+                str(col) for col in colors if
+                col not in inverse_palette
+            }
+            if color is None or unknown_rgbs:
+                color = self.project(memento)
+                logger.warning(
+                    ' some of the colors to '
+                    'compare are unknown rgb'
+                    ' values - returning rgb'
+                    ' codes instead of names'
+                )
+                return [
+                    delta_e_cie2000(
+                        color,
+                        self.project(
+                         other_color)
+                    )
+
+                    for other_color in colors
+                ]
+
         except InvalidColorFormatException as e:
             pass
 
@@ -252,7 +277,7 @@ class KNNColorGenie(ColorGenie):
         color = self.palette.get(
             color,
             self.guess_color_rgb(
-                color)
+                           color)
         )
 
         # for unknown colors, recompute the di-

@@ -148,13 +148,20 @@ class SmartPalette(object):
         :param as_rgb:
         :return:
         """
-        similarities = self.genie.compare(
-            color,
-            self.MAIN_TINTS
-        )
+        try:
+            ColorConverter.check_rgb_code(color)
+            similarities = self.genie.compare(
+                color,
+                list(self.MAIN_TINTS.values())
+            )
+        except InvalidColorFormatException as e:
+            similarities = self.genie.compare(
+                color,
+                list(self.MAIN_TINTS.keys())
+            )
 
         tint_similarities = zip(
-            [*self.MAIN_TINTS] if as_rgb else
+            [*self.MAIN_TINTS] if not as_rgb else
             [*self.MAIN_TINTS.values()],
             similarities
         )
@@ -162,7 +169,7 @@ class SmartPalette(object):
         main_tint = sorted(
             tint_similarities,
             key=lambda x: x[1]
-        )[-1][0]
+        )[0][0]
 
         return main_tint
 
