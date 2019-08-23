@@ -84,7 +84,7 @@ You can add a color mapping to the SmartPalette with:
 >>> p.update_palette(HTML_PALETTE)
 ```
 
-If you want to add multiple palettes, you can call `update_palette` again:
+If you want to add mappings from multiple files, you can call `update_palette` again:
 ```python
 >>> from colorito import DEFAULT_PALETTE
 >>> p.update_palette(DEFAULT_PALETTE)
