@@ -21,7 +21,7 @@ have in your database.
 
 To install colorito, run:
 
-`pip install https://github.com/kekgle/colorito`
+`pip install git+https://github.com/kekgle/colorito`
 
 Once installed, try out the snippet below to see how it works. 
 
