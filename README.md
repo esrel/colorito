@@ -101,10 +101,11 @@ between colors are computed using the _delta E 2000_ score (which is more
 perceptually accurate than simple Euclidean distance on the RGB space).
 
 The `KNNColorGenie` is very simple and **weak at inferring the rgb of a color
-that it is not in the palette**. In fact, all it does is featurize the names
-of the colors in the palette (using a bag-of-words approach) and then, given
-the name of a new color, it returns the rgb of the color in the palette with
-the highest cosine similarity.
+that is not in the palette**. In fact, all it does is featurize the names
+of the colors in the palette (using a bag-of-words approach); then, given
+a new color, it featurizes its name using bag-of-words again, to obtain **x**.
+At this point, the genie assigns to the new color, the rgb of the known color
+whose bag-of-words featurization has the largest cosine similarity with **x**.
 
 This is obviously sub-optimal as there is no real _understanding_ of the
 semantics in colors' names. For instance, if `light red` and `dark red` are
