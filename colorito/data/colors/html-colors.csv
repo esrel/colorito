@@ -1,0 +1,325 @@
+name,hex
+Red,#ff0000
+Blue,#0000ff
+Gray,#808080
+Grey,#808080
+DarkBlue,#0000a0
+Black,#000000
+Orange,#ffa500
+Purple,#8e35ef
+Brown,#a52a2a
+Maroon,#810541
+Green,#00ff00
+Magenta,#ff00ff
+Olive,#808000
+Night,#0c090a
+Gunmetal,#2c3539
+Midnight,#2b1b17
+Charcoal,#34282c
+Dark Slate Grey,#25383c
+Oil,#3b3131
+Black Cat,#413839
+Iridium,#3d3c3a
+Black Eel,#463e3f
+Black Cow,#4c4646
+Gray Wolf,#504a4b
+Vampire Gray,#565051
+Gray Dolphin,#5c5858
+Carbon Gray,#625d5d
+Ash Gray,#666362
+Cloudy Gray,#6d6968
+Smokey Gray,#726e6d
+Gray,#736f6e
+Granite,#837e7c
+Battleship Gray,#848482
+Gray Cloud,#b6b6b4
+Gray Goose,#d1d0ce
+Metallic Silver,#bcc6cc
+Blue Gray,#98afc7
+Light Slate Gray,#6d7b8d
+Slate Gray,#657383
+Jet Gray,#616d7e
+Mist Blue,#646d7e
+Marble Blue,#566d7e
+Slate Blue,#737ca1
+Steel Blue,#4863a0
+Blue Jay,#2b547e
+Dark Slate Blue,#2b3856
+Midnight Blue,#151b54
+Navy Blue,#000080
+Blue Whale,#342d7e
+Lapis Blue,#15317e
+Denim Dark Blue,#151b8d
+Earth Blue,#0000a0
+Cobalt Blue,#0020c2
+Blueberry Blue,#0041c2
+Sapphire Blue,#2554c7
+Blue Eyes,#1569c7
+Royal Blue,#2b60de
+Blue Orchid,#1f45fc
+Blue Lotus,#6960ec
+Light Slate Blue,#736aff
+Windows Blue,#357ec7
+Glacial Blue Ice,#368bc1
+Silk Blue,#488ac7
+Blue Ivy,#3090c7
+Blue Koi,#659ec7
+Columbia Blue,#87afc7
+Baby Blue,#95b9c7
+Light Steel Blue,#728fce
+Ocean Blue,#2b65ec
+Blue Ribbon,#306eff
+Blue Dress,#157dec
+Dodger Blue,#1589ff
+Cornflower Blue,#6495ed
+Sky Blue,#6698ff
+Butterfly Blue,#38acec
+Iceberg,#56a5ec
+Crystal Blue,#5cb3ff
+Deep Sky Blue,#3bb9ff
+Denim Blue,#79baec
+Light Sky Blue,#82cafa
+Day Sky Blue,#82caff
+Jeans Blue,#a0cfec
+Blue Angel,#b7ceec
+Pastel Blue,#b4cfec
+Sea Blue,#c2dfff
+Powder Blue,#c6deff
+Coral Blue,#afdcec
+Light Blue,#addfff
+Robin Egg Blue,#bdedff
+Light Aquamarine,#93ffe8
+Electric Blue,#9afeff
+Aquamarine,#7fffd4
+Cyan or Aqua,#00ffff;
+Tron Blue,#7dfdfe;
+Blue Zircon,#57feff
+Blue Lagoon,#8eebec
+Celeste,#50ebec
+Blue Diamond,#4ee2ec
+Tiffany Blue,#81d8d0
+Cyan Opaque,#92c7c7
+Blue Hosta,#77bfc7
+Northern Lights Blue,#78c7c7
+Medium Turquoise,#48cccd
+Turquoise,#43c6db
+Jellyfish,#46c7c7
+Blue green,#7bccb5
+Macaw Blue Green,#43bfc7
+Light Sea Green,#3ea99f
+Dark Turquoise,#3b9c9c;
+Sea Turtle Green,#438d80
+Medium Aquamarine,#348781
+Greenish Blue,#307d7e
+Grayish Turquoise,#5e7d7e
+Beetle Green,#4c787e
+Teal,#008080
+Sea Green,#4e8975
+Camouflage Green,#78866b
+Sage Green,#848b79
+Hazel Green,#617c58
+Venom Green,#728c00
+Fern Green,#667c26
+Dark Forest Green,#254117
+Medium Sea Green,#306754
+Medium Forest Green,#347235
+Seaweed Green,#437c17
+Pine Green,#387c44
+Jungle Green,#347c2c
+Shamrock Green,#347c17
+Medium Spring Green,#348017
+Forest Green,#4e9258
+Green Onion,#6aa121
+Spring Green,#4aa02c
+Lime Green,#41a317
+Clover Green,#3ea055
+Green Snake,#6cbb3c
+Alien Green,#6cc417
+Green Apple,#4cc417
+Yellow Green,#52d017
+Kelly Green,#4cc552
+Zombie Green,#54c571
+Frog Green,#99c68e
+Green Peas,#89c35c
+Dollar Bill Green,#85bb65
+Dark Sea Green,#8bb381
+Iguana Green,#9cb071
+Avocado Green,#b2c248
+Pistachio Green,#9dc209
+Salad Green,#a1c935
+Hummingbird Green,#7fe817
+Nebula Green,#59e817
+Stoplight Go Green,#57e964
+Algae Green,#64e986
+Jade Green,#5efb6e
+Emerald Green,#5ffb17
+Lawn Green,#87f717
+Chartreuse,#8afb17
+Dragon Green,#6afb92
+Mint green,#98ff98
+Green Thumb,#b5eaaa
+Light Jade,#c3fdb8
+Tea Green,#ccfb5d
+Green Yellow,#b1fb17
+Slime Green,#bce954
+Goldenrod,#edda74
+Harvest Gold,#ede275
+Sun Yellow,#ffe87c
+Mustard,#ffdb58
+Rubber Ducky Yellow,#ffd801
+Bright Gold,#fdd017
+Golden brown,#eac117
+Macaroni and Cheese,#f2bb66
+Saffron,#fbb917
+Beer,#fbb117
+Cantaloupe,#ffa62f
+Bee Yellow,#e9ab17
+Brown Sugar,#e2a76f
+BurlyWood,#deb887
+Deep Peach,#ffcba4
+Ginger Brown,#c9be62
+School Bus Yellow,#e8a317
+Sandy Brown,#ee9a4d
+Fall Leaf Brown,#c8b560
+Orange Gold,#d4a017
+Sand,#c2b280
+Cookie Brown,#c7a317
+Caramel,#c68e17
+Brass,#b5a642
+Khaki,#ada96e
+Camel brown,#c19a6b
+Bronze,#cd7f32
+Tiger Orange,#c88141
+Cinnamon,#c58917
+Bullet Shell,#af9b60
+Dark Goldenrod,#af7817
+Copper,#b87333
+Wood,#966f33
+Oak Brown,#806517
+Moccasin,#827839
+Army Brown,#827b60
+Sandstone,#786d5f
+Mocha,#493d26
+Taupe,#483c32
+Coffee,#6f4e37
+Brown Bear,#835c3b
+Red Dirt,#7f5217
+Sepia,#7f462c
+Orange Salmon,#c47451
+Rust,#c36241
+Red Fox,#c35817
+Chocolate,#c85a17
+Sedona,#cc6600
+Papaya Orange,#e56717
+Halloween Orange,#e66c2c
+Pumpkin Orange,#f87217
+Construction Cone Orange,#f87431;
+Sunrise Orange,#e67451
+Mango Orange,#ff8040;
+Dark Orange,#f88017
+Coral,#ff7f50
+Basket Ball Orange,#f88158
+Light Salmon,#f9966b
+Tangerine,#e78a61
+Dark Salmon,#e18b6b
+Light Coral,#e77471
+Bean Red,#f75d59
+Valentine Red,#e55451
+Shocking Orange,#e55b3c
+Scarlet,#ff2400
+Ruby Red,#f62217
+Ferrari Red,#f70d1a
+Fire Engine Red,#f62817
+Lava Red,#e42217
+Love Red,#e41b17
+Grapefruit,#dc381f
+Chestnut Red,#c34a2c
+Cherry Red,#c24641
+Mahogany,#c04000
+Chilli Pepper,#c11b17
+Cranberry,#9f000f
+Red Wine,#990012
+Burgundy,#8c001a
+Chestnut,#954535
+Blood Red,#7e3517
+Sienna,#8a4117
+Sangria,#7e3817
+Firebrick,#800517
+Plum Pie,#7d0541
+Velvet Maroon,#7e354d
+Plum Velvet,#7d0552
+Rosy Finch,#7f4e52
+Puce,#7f5a58
+Dull Purple,#7f525d
+Rosy Brown,#b38481
+Khaki Rose,#c5908e
+Pink Bow,#c48189
+Lipstick Pink,#c48793
+Rose,#e8adaa
+Rose Gold,#ecc5c0
+Desert Sand,#edc9af
+Pig Pink,#fdd7e4
+Cotton Candy,#fcdfff
+Pink Bubble Gum,#ffdfdd
+Misty Rose,#fbbbb9
+Pink,#faafbe
+Light Pink,#faafba
+Flamingo Pink,#f9a7b0
+Pink Rose,#e7a1b0
+Pink Daisy,#e799a3
+Cadillac Pink,#e38aae
+Carnation Pink,#f778a1;
+Blush Red,#e56e94
+Hot Pink,#f660ab
+Watermelon Pink,#fc6c85
+Violet Red,#f6358a
+Deep Pink,#f52887
+Pink Cupcake,#e45e9d
+Pink Lemonade,#e4287c
+Neon Pink,#f535aa
+Dimorphotheca Magenta,#e3319d
+Bright Neon Pink,#f433ff
+Pale Violet Red,#d16587
+Tulip Pink,#c25a7c
+Medium Violet Red,#ca226b
+Rogue Pink,#c12869
+Burnt Pink,#c12267
+Bashful Pink,#c25283
+Dark Carnation Pink,#c12283
+Plum,#b93b8f
+Viola Purple,#7e587e
+Purple Iris,#571b7e
+Plum Purple,#583759
+Indigo,#4b0082
+Purple Monster,#461b7e
+Purple Haze,#4e387e
+Eggplant,#614051
+Grape,#5e5a80
+Purple Jam,#6a287e
+Dark Orchid,#7d1b7e
+Purple Flower,#a74ac7
+Medium Orchid,#b048b5
+Purple Amethyst,#6c2dc7
+Dark Violet,#842dce
+Violet,#8d38c9
+Purple Sage Bush,#7a5dc7
+Lovely Purple,#7f38ec
+Aztech Purple,#893bff
+Medium Purple,#8467d7
+Jasmine Purple,#a23bec
+Purple Daffodil,#b041ff
+Tyrian Purple,#c45aec
+Crocus Purple,#9172ec
+Purple Mimosa,#9e7bff
+Heliotrope Purple,#d462ff
+Crimson,#e238ec
+Purple Dragon,#c38ec7
+Lilac,#c8a2c8
+Blush Pink,#e6a9ec
+Mauve,#e0b0ff
+Wisteria Purple,#c6aec7
+Blossom Pink,#f9b7ff
+Thistle,#d2b9d3
+Periwinkle,#d9cfec
+Lavender Pinocchio,#ebdde2
+Lavender blue,#e3e4fa
