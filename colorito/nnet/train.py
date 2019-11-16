@@ -52,11 +52,6 @@ def train(
     :return:
     """
 
-    if notebook:
-        from tqdm import tqdm_notebook as tqdm
-    else:
-        from tqdm import tqdm as tqdm
-
     logger.info(
         f' will train a {"lite " if lite else ""}ColorGenerator.'
     )
@@ -114,6 +109,11 @@ def train(
 
     dataloader = DataLoader(dataset, batch_size, shuffle=True)
     criterion_ = ColorDistance()
+
+    if notebook:
+        from tqdm import tqdm_notebook as tqdm
+    else:
+        from tqdm import tqdm as tqdm
 
     # train the model
 
