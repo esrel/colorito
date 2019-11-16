@@ -11,3 +11,7 @@ DEFAULT_PALETTE = os.path.join(
 
 DEFAULT_NETWORK = os.path.join(
      MODELS, 'color-generator')
+
+LITE_NETWORK = os.path.join(
+     MODELS, 'lite-colorgen'
+)
