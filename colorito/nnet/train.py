@@ -13,6 +13,7 @@ from colorito.nnet.modules.lin import LinearModule
 
 from torch.utils.data.dataloader import DataLoader
 from datetime import datetime
+from tqdm.autonotebook import tqdm
 
 import torch
 import numpy as np
@@ -20,20 +21,29 @@ import argparse
 import os
 
 
+defaults = {
+    'data': COLORS,
+    'output': MODELS,
+    'ngrams': 3,
+    'epochs': 10,
+    'batch_size': 32,
+    'learning_rate': 1e-03,
+    'decay': 0.0
+}
+
 logger = setup_logger('color-generator:train')
 
 
 def train(
-    data,
-    output,
-    ngrams,
-    epochs,
-    batch_size,
-    learning_rate,
-    decay=0.0,
+    data=defaults['data'],
+    output=defaults['output'],
+    ngrams=defaults['ngrams'],
+    epochs=defaults['epochs'],
+    batch_size=defaults['batch_size'],
+    learning_rate=defaults['learning_rate'],
+    decay=defaults['decay'],
     lite=True,
-    wbound=False,
-    notebook=False
+    wbound=False
 ):
     """
     Trains a neural network to generate colors from text data;
@@ -48,7 +58,6 @@ def train(
     :param decay:
     :param lite:
     :param wbound:
-    :param notebook:
     :return:
     """
 
@@ -107,13 +116,12 @@ def train(
         + '' if not decay else f'(decaying by {decay} per epoch...)'
     )
 
-    dataloader = DataLoader(dataset, batch_size, shuffle=True)
+    dataloader = DataLoader(
+                dataset,
+                batch_size,
+                shuffle=True
+    )
     criterion_ = ColorDistance()
-
-    if notebook:
-        from tqdm import tqdm_notebook as tqdm
-    else:
-        from tqdm import tqdm as tqdm
 
     # train the model
 
@@ -185,7 +193,7 @@ def argument_parser():
     parser.add_argument(
         '-d',
         '--data',
-        default=COLORS,
+        default=defaults['data'],
         help='Path to the folder containing '
              'the csv with colors. Each file'
              ' should have two columns: one '
@@ -195,13 +203,13 @@ def argument_parser():
     parser.add_argument(
         '-o',
         '--output',
-        default=MODELS,
+        default=defaults['output'],
         help='Path to where the model is saved'
     )
     parser.add_argument(
         '-n',
         '--ngrams',
-        default=3,
+        default=defaults['ngrams'],
         type=int,
         help='Maximum order of n-grams that are'
              ' extracted from the training data'
@@ -221,36 +229,29 @@ def argument_parser():
              '(trains typically 5x faster)'
     )
     parser.add_argument(
-        '--notebook',
-        action='store_true',
-        help='Organizes the output so that it '
-             'is "notebook-friendly"; use when'
-             ' training from a notebook'
-    )
-    parser.add_argument(
         '-e',
         '--epochs',
-        default=10,
+        default=defaults['epochs'],
         type=int,
         help='Number of training epochs'
     )
     parser.add_argument(
         '-b',
         '--batch_size',
-        default=32,
+        default=defaults['batch_size'],
         type=int,
         help='Size of a training batch'
     )
     parser.add_argument(
         '-lr',
         '--learning_rate',
-        default=1e-03,
+        default=defaults['learning_rate'],
         type=float,
         help='Learning rate for optimizing'
     )
     parser.add_argument(
         '--decay',
-        default=0,
+        default=defaults['decay'],
         type=float,
         help='Learning rate decay per epoch'
     )
