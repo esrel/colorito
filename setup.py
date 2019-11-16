@@ -13,11 +13,12 @@ setuptools.setup(
      long_description=long_description,
      long_description_content_type="text/markdown",
      url="https://github.com/kekgle/colorito",
-     python_requires=">=3.0, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",
+     python_requires=">=3.0, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, != 3.5.*",
      packages=setuptools.find_packages(),
      # entry_points={"console_scripts": [
      #   'cmd = package.file:function'
      # ]},
+     include_package_data=True,
      install_requires=[
          "tqdm",
          "sklearn",
