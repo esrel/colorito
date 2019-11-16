@@ -202,6 +202,7 @@ def argument_parser():
         '-n',
         '--ngrams',
         default=3,
+        type=int,
         help='Maximum order of n-grams that are'
              ' extracted from the training data'
     )
