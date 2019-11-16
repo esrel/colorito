@@ -28,7 +28,7 @@ class LiteRecurrentModule(RecurrentModule):
 
     @property
     def num_layers(self):
-        return 1
+        return 2
 
     def _init_embedd(self, order):
         """
