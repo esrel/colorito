@@ -11,12 +11,11 @@ class LSTMEncoder(Encoder):
 
     def __init__(
         self,
-        input_dim,
         lexicons_,
+        input_dim,
         max_ngram_order=1,
         ret_sequences=False
     ):
-
         super(LSTMEncoder, self).__init__(
             lexicons_,
             input_dim,
@@ -179,8 +178,8 @@ class LiteEncoder(LSTMEncoder):
 
     def __init__(
         self,
-        input_dim,
         lexicons_,
+        input_dim,
         ngram_order=1,
         ret_sequences=False
     ):
