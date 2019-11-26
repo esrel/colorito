@@ -39,10 +39,9 @@ class SmartPalette(object):
             )
 
         self.nnet = ColorGenerator.load(nnet)
-        ngrams = len(self.nnet.rnn.lexicons_)
-
-        self.vectorz = NgramVectorizer( order=ngrams )
-        self.vectorz.lexicons = self.nnet.rnn.lexicons_
+        n_ = len(self.nnet.encoder.lexicons_)
+        self.vectorz = NgramVectorizer(order=n_)
+        self.vectorz.lexicons = self.nnet.encoder.lexicons_
 
         self._index_colors()
 
