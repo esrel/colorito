@@ -165,7 +165,7 @@ class ColorGenerator(nn.Module):
         encoder = encoder.load(os.path.join(modules, 'encoder'))
         decoder = Decoder.load(os.path.join(modules, 'decoder'))
 
-        return cls(encoder, decoder)
+        return cls(encoder)
 
     @classmethod
     def metadata_fname(cls):
