@@ -5,17 +5,15 @@ from colorito.utils.logs import setup_logger
 from colorito.data.vectorize import NgramVectorizer
 from colorito.data.dataset import ColorDataset
 
-from colorito.nnet.network import ColorGenerator
-from colorito.nnet.modules.loss import ColorDistance
-from colorito.nnet.modules.lstm import RecurrentModule
-from colorito.nnet.modules.lite import LiteRecurrentModule as LiteRecurModule
-from colorito.nnet.modules.lin import LinearModule
+from colorito.nnet.model import ColorGenerator
+from colorito.nnet.modules.encoders.lstm import LSTMEncoder, LiteEncoder
 
 from torch.utils.data.dataloader import DataLoader
 from datetime import datetime
 from tqdm.autonotebook import tqdm
 
 import torch
+import torch.nn as nn
 import numpy as np
 import argparse
 import os
@@ -25,7 +23,7 @@ defaults = {
     'data': COLORS,
     'output': MODELS,
     'ngrams': 3,
-    'epochs': 10,
+    'epochs': 5,
     'batch_size': 32,
     'learning_rate': 1e-03,
     'decay': 0.0
@@ -86,29 +84,21 @@ def train(
 
     input_dim = tuple(dataset.x[0].size())
     if lite:
-        recur = LiteRecurModule(
+        encoder = LiteEncoder(
             input_dim=input_dim,
             lexicons_=vectorz.lexicons,
             ngram_order=ngrams,
             ret_sequences=False
         )
     else:
-        recur = RecurrentModule(
+        encoder = LSTMEncoder(
             input_dim=input_dim,
             lexicons_=vectorz.lexicons,
             max_ngram_order=ngrams,
             ret_sequences=False
         )
 
-    dense =  LinearModule(
-        recur.output_size(),
-        512,
-        256
-    )
-
-    cg = ColorGenerator(
-                  recur,
-                  dense)
+    cg = ColorGenerator(encoder)
 
     logger.info(
         f' will train for {epochs} epochs; with {batch_size}-sized '
@@ -116,18 +106,17 @@ def train(
         + '' if not decay else f'(decaying by {decay} per epoch...)'
     )
 
+    criterion_ = nn.MSELoss()
     dataloader = DataLoader(
-                dataset,
-                batch_size,
-                shuffle=True
+        dataset, batch_size,
+        shuffle=True
     )
-    criterion_ = ColorDistance()
 
     # train the model
 
     for epoch in range(epochs):
 
-        lr = learning_rate  # - 1e-04 * epoch
+        lr = learning_rate - epoch * decay
         optimizer = torch.optim.Adam(
             cg.parameters(),
             lr=lr
@@ -261,7 +250,6 @@ def argument_parser():
 
 if __name__ == '__main__':
 
-    parser = argument_parser()
-    args = parser.parse_args()
+    args = argument_parser().parse_args()
 
     train(**vars(args))

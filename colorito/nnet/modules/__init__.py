@@ -33,10 +33,10 @@ class SmartModule(nn.Module):
             )
 
         metadata_f = os.path.join(
-          to, self.metadata_fname()
+         to, self.metadata_fname()
         )
         parameters_f = os.path.join(
-          to, self.parameters_fname()
+         to, self.parameters_fname()
         )
         # save metadata:
         try:

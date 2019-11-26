@@ -1,7 +1,7 @@
 from colorito import DEFAULT_PALETTE, DEFAULT_NETWORK
 from colorito.data.vectorize import NgramVectorizer
 from colorito.utils import Reader
-from colorito.nnet.network import ColorGenerator
+from colorito.nnet.model import ColorGenerator
 from colorito.colors import Color
 from colorito.data.utils import encode
 

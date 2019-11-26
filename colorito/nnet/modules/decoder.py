@@ -5,10 +5,10 @@ import torch
 import torch.nn as nn
 
 
-class LinearModule(SmartModule):
+class Decoder(SmartModule):
 
     def __init__(self, dim, *layers):
-        super(LinearModule, self).__init__(
+        super(Decoder, self).__init__(
             dim, *layers
         )
 

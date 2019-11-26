@@ -26,6 +26,7 @@ setuptools.setup(
          "scipy",
          "torch",
          "spacy",
+         "kneed",
          "colormath",
          "matplotlib"
      ],

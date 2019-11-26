@@ -1,7 +1,6 @@
 from colorito.nnet.modules import SmartModule
-from colorito.nnet.modules.lstm import RecurrentModule
-from colorito.nnet.modules.lite import LiteRecurrentModule as LiteRecurModule
-from colorito.nnet.modules.lin import LinearModule
+from colorito.nnet.modules.encoders.lstm import LSTMEncoder, LiteEncoder
+from colorito.nnet.modules.decoder import Decoder
 from colorito.utils.fs import mkdir
 from colorito.utils.logs import setup_logger
 from colorito.exceptions import SaveError, LoadError
@@ -22,73 +21,38 @@ class ColorGenerator(nn.Module):
     # before being usable.
 
     REGISTRY = {
-        'rnn': {
-            RecurrentModule.name(): RecurrentModule,
-            LiteRecurModule.name(): LiteRecurModule
-        },
-        'lin': {
-            LinearModule.name(): LinearModule
+        'encoder': {
+            LSTMEncoder.name(): LSTMEncoder,
+            LiteEncoder.name(): LiteEncoder
         }
     }
 
-    def __init__(self, rnn, lin):
-        self._validate_registry()
-        assert isinstance(rnn, SmartModule), f'{rnn.__class__.__name__} is not a SmartModule'
-        assert isinstance(lin, SmartModule), f'{lin.__class__.__name__} is not a SmartModule'
+    def __init__(self, encoder):
+        assert isinstance(encoder, SmartModule), f'{encoder.__class__.__name__} is not a SmartModule'
         assert (
-            rnn.name() in self.REGISTRY['rnn']
+            encoder.name() in self.REGISTRY['encoder']
         ), (
-            f'{rnn.name()} is not registered as a '
-            f'valid rnn module - you can register '
-            f'a module by adding it to the ColorGe'
-            f'nerator\'s REGISTRY class variable. '
+            f'{encoder.name()} is not registered as a '
+            f'valid encoder module - you can register '
+            f'a module by adding it to the ColorGenera'
+            f'tor\'s REGISTRY class variable. '
         )
-        assert (
-            lin.name() in self.REGISTRY['lin']
-        ), (
-            f'{lin.name()} is not registered as a '
-            f'valid lin module - you can register '
-            f'a module by adding it to the ColorGe'
-            f'nerator\'s REGISTRY class variable. '
-        )
-
         super().__init__()
-        self.lin = lin
-        self.rnn = rnn
-
-    def _validate_registry(self):
-        """
-        Validates the registry by making sure that there
-        are no classes shared between different types of
-        sub-modules.
-
-        :return:
-        """
-        classes = [
-            name for name in {
-                _ for d in self.REGISTRY.values() for _ in d.keys()
-            }
-        ]
-        assert (
-            len(classes) == len(set(classes))
-        ), (
-            'Registry is invalid. Some class '
-            'is registered more than once as '
-            'a different sub-component.'
-        )
+        self.decoder = Decoder(encoder.output_size())
+        self.encoder = encoder
 
     def forward(self, x):
-        x, _ = self.rnn(x)
-        x, _ = self.lin(x)
+        x, _ = self.encoder(x)
+        x, _ = self.decoder(x)
         return x
 
     def h(self, x):
         self.eval()
         with torch.no_grad():
-            x, _ = self.rnn(x)
-            _, h = self.lin(x)
+            x, _ = self.encoder(x)
+            _, h = self.decoder(x)
 
-        self.train()
+        self.train(mode=True)
 
         return h
 
@@ -96,7 +60,7 @@ class ColorGenerator(nn.Module):
         self.eval()
         y = self(x)
 
-        self.train()
+        self.train(mode=True)
 
         return y
 
@@ -118,11 +82,11 @@ class ColorGenerator(nn.Module):
         # save metadata (contains class names of
         # the sub-modules used by the generator)
 
-        rec_module = self.rnn.__class__.__name__
-        lin_module = self.lin.__class__.__name__
+        encoder_module = self.encoder.__class__.__name__
+        decoder_module = self.decoder.__class__.__name__
         metadata = {
-            'rnn': rec_module,
-            'lin': lin_module
+            'encoder': encoder_module,
+            'decoder': decoder_module
         }
 
         metadata_f = os.path.join(to, self.metadata_fname())
@@ -143,8 +107,8 @@ class ColorGenerator(nn.Module):
         def _save_submodule(submodule, dest):
             mkdir(dest), submodule.save(dest)
 
-        _save_submodule(self.rnn, os.path.join(modules, 'rnn'))
-        _save_submodule(self.lin, os.path.join(modules, 'lin'))
+        _save_submodule(self.encoder, os.path.join(modules, 'encoder'))
+        _save_submodule(self.decoder, os.path.join(modules, 'decoder'))
 
     @classmethod
     def load(cls, from_):
@@ -178,31 +142,30 @@ class ColorGenerator(nn.Module):
         # ensure classes in metadata are valid:
 
         if not (
-            metadata.get('rnn') and
-            metadata.get('lin')
+            metadata.get('encoder') and
+            metadata.get('decoder')
         ):
             raise LoadError(
                 cls=module ,
                 err='invalid metadata (missing'
-                    ' `rnn` and/or `lin` keys)'
+                    ' `encoder` and/or `decoder` keys)'
             )
         try:
-            rnn = cls.REGISTRY['rnn'][metadata['rnn']]
-            lin = cls.REGISTRY['lin'][metadata['lin']]
+            encoder = cls.REGISTRY['encoder'][metadata['encoder']]
 
         except KeyError:
             raise LoadError(
                 cls=module ,
-                err='invalid metadata (invalid'
-                    ' `rnn` and/or `lin` keys)'
+                err='invalid metadata (invalid `en'
+                    'coder` and/or `decoder` keys)'
             )
 
         modules = os.path.join(from_, 'modules')
         # load sub-modules:
-        rnn = rnn.load(os.path.join(modules, 'rnn'))
-        lin = lin.load(os.path.join(modules, 'lin'))
+        encoder = encoder.load(os.path.join(modules, 'encoder'))
+        decoder = Decoder.load(os.path.join(modules, 'decoder'))
 
-        return cls(rnn, lin)
+        return cls(encoder, decoder)
 
     @classmethod
     def metadata_fname(cls):

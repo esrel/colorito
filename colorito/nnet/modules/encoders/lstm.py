@@ -1,5 +1,5 @@
 from colorito import DEVICE
-from colorito.nnet.modules import SmartModule
+from colorito.nnet.modules.encoders import Encoder
 
 from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 
@@ -7,7 +7,7 @@ import torch
 import torch.nn as nn
 
 
-class RecurrentModule(SmartModule):
+class LSTMEncoder(Encoder):
 
     def __init__(
         self,
@@ -17,9 +17,9 @@ class RecurrentModule(SmartModule):
         ret_sequences=False
     ):
 
-        super(RecurrentModule, self).__init__(
-            input_dim,
+        super(LSTMEncoder, self).__init__(
             lexicons_,
+            input_dim,
             max_ngram_order,
             ret_sequences
         )
@@ -70,7 +70,7 @@ class RecurrentModule(SmartModule):
             # ach ngram order, while increasi-
             # ng the embedding dimension as t-
             # he ngram order increases:
-            embedding_dim = int(32 * (order + 1))
+            embedding_dim = int(32 * (order+1))
             self.embedding_len += embedding_dim
             self.ngram_embedds.append(
                 nn.Embedding(
@@ -88,24 +88,10 @@ class RecurrentModule(SmartModule):
         :param batch_size:
         :return:
         """
-        self.h = torch.randn((self.num_layers, batch_size, self.hidden_dim))
-        self.c = torch.randn((self.num_layers, batch_size, self.hidden_dim))
+        self.h = torch.zeros((self.num_layers, batch_size, self.hidden_dim))
+        self.c = torch.zeros((self.num_layers, batch_size, self.hidden_dim))
         self.h.to(DEVICE)
         self.c.to(DEVICE)
-
-    def output_size(self):
-        """
-        Forwards a fake batch through the network to
-        find out its output size and then returns it.
-
-        :return:
-        """
-        fake_batch = torch.ones(1, *self.input_dim)
-        fake_batch = fake_batch.long(  ).to(DEVICE)
-        with torch.no_grad():
-            out, _ = self(fake_batch)
-
-        return out.squeeze().size()
 
     def batchsort(self, batch):
         """
@@ -123,7 +109,7 @@ class RecurrentModule(SmartModule):
         sorted_lens, sorted_ix = lengths.sort(descending=True)
 
         _, unsorted_ix = sorted_ix.sort()
-        sorted_batch = batch[sorted_ix]
+        sorted_batch = batch[ sorted_ix ]
 
         return sorted_batch, sorted_lens, unsorted_ix
 
@@ -150,7 +136,7 @@ class RecurrentModule(SmartModule):
     def forward(self, x):
         batch_size = x.size()[0]
         self._init_hidden(
-            batch_size)
+               batch_size)
 
         # compute embedding for each ngram
         # in the sequence, then concatena-
@@ -169,8 +155,8 @@ class RecurrentModule(SmartModule):
         x, (self.h, self.c) = self.lstm(x, (self.h, self.c))
 
         x, _ = pad_packed_sequence(
-          x, total_length=self.slen,
-          batch_first=True)
+         x, total_length=self.slen,
+         batch_first=True)
 
         x = torch.index_select(x, 0, unsorted_ix)
 
@@ -187,3 +173,64 @@ class RecurrentModule(SmartModule):
             x = x[ row_index, column_index ]
 
         return x, (self.h, self.c)
+
+
+class LiteEncoder(LSTMEncoder):
+
+    def __init__(
+        self,
+        input_dim,
+        lexicons_,
+        ngram_order=1,
+        ret_sequences=False
+    ):
+        super(LiteEncoder, self).__init__(
+            input_dim=input_dim,
+            lexicons_=lexicons_,
+            max_ngram_order=ngram_order,
+            ret_sequences=ret_sequences
+        )
+
+        self.ngram_order = ngram_order
+
+    @property
+    def hidden_dim(self):
+        return 256
+
+    @property
+    def num_layers(self):
+        return 2
+
+    def _init_embedd(self, order):
+        """
+        Build embedding layers. One layer
+        only for ngrams of order `order`.
+
+        :param order:
+        :return:
+        """
+        order = order - 1
+        embedding_dim = int(32 * 2 ** (order))
+        self.embedding_len += embedding_dim
+        self.ngram_embedds = nn.Embedding(
+            num_embeddings=len(self.lexicons_[order]),
+            padding_idx=self.lexicons_[order][ '#' ] ,
+            embedding_dim=embedding_dim
+        ).to(DEVICE)
+
+    def compute_embeddings(self, x):
+        """
+        Computes the embeddings for all ngram
+        features and concatenates them togeth-
+        er before they are passed to the LSTM.
+
+        :param x:
+        :return:
+        """
+        x = x.long()
+        x = self.ngram_embedds(
+            x[:, :, self.ngram_order - 1]
+        )  # select only n-grams features
+        # of interest
+
+        return x

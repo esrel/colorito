@@ -75,17 +75,32 @@ class ColorDataset(Dataset):
         logger.info(' de-duplicating colors...')
 
         unique = {}
+        counts = {}
         for name, val in colors:
             if name not in unique:
                 unique[name] = []
+                counts[name] = {}
+
+            val_as_string = ", ".join([
+                f'{v}' for v in val.tolist()
+            ])
 
             unique[name].append(val)
+            counts[name][val_as_string] = counts[name].get(
+                                          val_as_string, 0) + 1
 
-        # average labels of colors with same name:
+        # take as label for duplicated colors, the one that ap-
+        # pears with highest frequency, breaking ties randomly:
+
         unique = {
-            k: torch.mean(
-                torch.stack(v).t(), dim=1
-            ) for k, v in unique.items( )
+            k: torch.tensor([
+                float(s)
+                for s in sorted(
+                    counts[k].items(),
+                    key=lambda t: t[1]
+                )[-1][0].split( ", " )
+            ])
+            for k, v in unique.items()
         }
 
         logger.info(
