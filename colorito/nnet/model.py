@@ -27,7 +27,7 @@ class ColorGenerator(nn.Module):
         }
     }
 
-    def __init__(self, encoder):
+    def __init__(self, encoder, decoder=None):
         assert isinstance(encoder, SmartModule), f'{encoder.__class__.__name__} is not a SmartModule'
         assert (
             encoder.name() in self.REGISTRY['encoder']
@@ -38,8 +38,13 @@ class ColorGenerator(nn.Module):
             f'tor\'s REGISTRY class variable. '
         )
         super().__init__()
-        self.decoder = Decoder(encoder.output_size())
+        self.decoder = decoder
         self.encoder = encoder
+
+        if self.decoder is None:
+            self.decoder = Decoder(encoder.output_size())
+        else:
+            assert self.decoder.__class__ == Decoder, f'{decoder.__class__.__name__} is not a Decoder'
 
     def forward(self, x):
         x, _ = self.encoder(x)
@@ -165,7 +170,7 @@ class ColorGenerator(nn.Module):
         encoder = encoder.load(os.path.join(modules, 'encoder'))
         decoder = Decoder.load(os.path.join(modules, 'decoder'))
 
-        return cls(encoder)
+        return cls(encoder, decoder=decoder)
 
     @classmethod
     def metadata_fname(cls):

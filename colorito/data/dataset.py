@@ -51,8 +51,7 @@ class ColorDataset(Dataset):
     def _process(self, colors):
         """
         Cleans colors' names, unifies colors
-        with the same name by averaging the-
-        ir coordinates (either lab or rgb).
+        with the same name (drop duplicates).
 
         :param colors:
         :return:
