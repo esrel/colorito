@@ -42,7 +42,10 @@ class ColorGenerator(nn.Module):
         self.encoder = encoder
 
         if self.decoder is None:
-            self.decoder = Decoder(encoder.output_size())
+            self.decoder = Decoder(
+              encoder.output_size(),
+              512
+            )
         else:
             assert self.decoder.__class__ == Decoder, f'{decoder.__class__.__name__} is not a Decoder'
 

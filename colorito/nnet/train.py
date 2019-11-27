@@ -124,7 +124,10 @@ def train(
 
         avg_epoch_loss, loss = [], None
 
-        logger.info(f' Epoch {epoch + 1}/{epochs}:')
+        logger.info(
+            f' Epoch {epoch + 1}/{epochs} will '
+            f'run with a learning rate of: {lr}'
+        )
         pbar = tqdm(
             total=round(len(dataset) / batch_size)
         )

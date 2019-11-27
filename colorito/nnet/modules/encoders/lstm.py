@@ -32,8 +32,8 @@ class LSTMEncoder(Encoder):
         # fset together, and feed them to LSTM.
 
         self.embedding_len = 0
-        self.ngram_embedds = []
-        self._init_embedd(max_ngram_order)
+        self._init_embedd(
+          max_ngram_order)
 
         embedding_leng = self.embedding_len
         self.slen = input_dim[ 0 ]  # sequence length
@@ -71,7 +71,8 @@ class LSTMEncoder(Encoder):
             # he ngram order increases:
             embedding_dim = int(32 * (order+1))
             self.embedding_len += embedding_dim
-            self.ngram_embedds.append(
+            self.__setattr__(
+                f'ngram_embedds_{order+1}',
                 nn.Embedding(
                     num_embeddings=len(self.lexicons_[order]),
                     padding_idx=self.lexicons_[order][ '#' ] ,
@@ -92,6 +93,36 @@ class LSTMEncoder(Encoder):
         self.h.to(DEVICE)
         self.c.to(DEVICE)
 
+    def _ngram_embedds(self, order):
+        """
+        Return the embedding layer f-
+        or the specified ngram order.
+
+        :param order:
+        :return:
+        """
+        return self.__getattr__(f'ngram_embedds_{order}')
+
+    def compute_embeddings(self, x):
+        """
+        Computes the embeddings for all ngram
+        features and concatenates them togeth-
+        er before they are passed to the LSTM.
+
+        :param x:
+        :return:
+        """
+
+        shape = x.size()[:-1]
+
+        x = x.long()
+        x = torch.cat([
+            self._ngram_embedds(i + 1)(x[:, :, i:i + 1])
+            for i in range(x.size()[-1])
+        ], -1)
+
+        return x.view(*shape, self.elen)
+
     def batchsort(self, batch):
         """
         Sort sequences in the batch by length and returns
@@ -111,26 +142,6 @@ class LSTMEncoder(Encoder):
         sorted_batch = batch[ sorted_ix ]
 
         return sorted_batch, sorted_lens, unsorted_ix
-
-    def compute_embeddings(self, x):
-        """
-        Computes the embeddings for all ngram
-        features and concatenates them togeth-
-        er before they are passed to the LSTM.
-
-        :param x:
-        :return:
-        """
-
-        shape = x.size()[:-1]
-
-        x = x.long()
-        x = torch.cat([
-            self.ngram_embedds[i](x[:, :, i:i + 1])
-            for i in range(x.size()[-1])
-        ], -1)
-
-        return x.view(*shape, self.elen)
 
     def forward(self, x):
         batch_size = x.size()[0]
@@ -209,13 +220,21 @@ class LiteEncoder(LSTMEncoder):
         :return:
         """
         order = order - 1
-        embedding_dim = int(32 * 2 ** (order))
+        embedding_dim = int(32 * 2 ** order)
         self.embedding_len += embedding_dim
         self.ngram_embedds = nn.Embedding(
             num_embeddings=len(self.lexicons_[order]),
             padding_idx=self.lexicons_[order][ '#' ] ,
             embedding_dim=embedding_dim
         ).to(DEVICE)
+
+    def _ngram_embedds(self, order):
+        """
+
+        :param order:
+        :return:
+        """
+        return self.ngram_embedds
 
     def compute_embeddings(self, x):
         """
