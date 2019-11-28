@@ -89,7 +89,7 @@ Additional information are provided in the section below
 ## How Does It Work?
 
 The core of colorito is a **neural model** (developed using [PyTorch](https://www.pytorch.org)),
-that was trained on **generating color coordinates from color names**. 
+that was trained to **generate color coordinates from color names**. 
 
 ### Training
 The network used by colorito was trained using **almost 40k pairs** of color names - hexadecimal 
