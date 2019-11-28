@@ -89,6 +89,8 @@ Additional information are provided in the section below
 The core of colorito is a **neural model** (developed using [PyTorch](https://www.pytorch.org)),
 that was trained to **generate color coordinates from color names**. 
 
+<img src="https://github.com/kekgle/colorito/blob/master/media/colors.gif?raw=true"/>
+
 ### Training
 The network used by colorito was trained using **almost 40k pairs** of color names - hexadecimal 
 values, that were scraped from different web sources (scraping notebooks are available in
