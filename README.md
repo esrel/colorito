@@ -94,7 +94,7 @@ that was trained on **generating color coordinates from color names**.
 ### Training
 The network used by colorito was trained using **almost 40k pairs** of color names - hexadecimal 
 values, that were scraped from different web sources (scraping notebooks are available in
-the [notebooks](https://www.github.com/kekgle/colorito/) folder).
+the [notebooks](https://github.com/kekgle/colorito/tree/master/notebooks/mining) folder).
 
 During training, the **network learns to minimize the MSE of the generated CIELab coordinates of
 a color**, starting from its name (the coordinates are normalized in the [0, 1] range). 
@@ -120,5 +120,5 @@ layers, that uses only character unigram features, followed by the same dense la
 "beefier" model.
 
 You can find a notebook where training of both networks can be reproduced in the
-[notebooks](https://www.github.com/kekgle/colorito/) folder.
+[notebooks](https://github.com/kekgle/colorito/tree/master/notebooks/mining) folder.
 
