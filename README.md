@@ -1,117 +1,122 @@
 # colorito
 
-Python library for **color normalization and color similarity inference.**
+Python library for **natural language color search.**
 
 ## What Does It Do?
 
-Starting from a color (provided either as text or as an RGB tuple), colorito can be used to:
-* **retrieve similar colors**;
-* **guess the rgb value of the given color**;
-* **guess the main tint** (red, orange, blue, brown, black, pink, ...) of the given color.
+Given an initial list of color names, colorito is capable of **retrieving**, from 
+said list, all **colors that are perceptually similar** to a specified one.
 
-colorito can be used to **address underspecification in search constraints**. 
-
-Imagine, for instance, a scenario where a user is searching for a _red_ product in 
-your catalog. When retrieving results, you may not want to limit yourself only to 
-products whose color is exactly _red_. You could also retrieve products with colors 
-that are similar, like _magenta_, _fire red_ and any other different shade you may 
-have in your database. 
-
-## Quick Start
+## Installation
 
 To install colorito, run:
 
 `pip install https://github.com/kekgle/colorito`
 
-Once installed, try out the snippet below to see how it works. 
+
+## Quick Start
+
+The main component in colorito is called **SmartPalette**. A SmartPalette is 
+built starting from a list of color names. These names are then transformed 
+into real colors (`colorito.colors.Color`), by a color generator (namely, a 
+neural network). 
 
 ```python
-from colorito import HTML_PALETTE
-from colorito.palette import SmartPalette
-from colorito.genies.knn import KNNColorGenie
-
-g = KNNColorGenie()  # create the color genie
-p = SmartPalette(g)  # create the smart palette
-
-# add color-name: color-rgb mappings to palette
-p.update_palette(HTML_PALETTE)
-# prepare the palette (train the color genie to
-# perform inference on similar colors)
-p.prepare()
-
-# the palette is now ready, you can try getting
-# the rgb of a known color, for instance `red`:
-print(p.get_color_rgb('red'))
-
-# and of an unknown color (not in HTML_PALETTE):
-print(p.get_color_rgb('pale blue'))
-
-# you can also get colors similar to the one we
-# provided, even when it's not in HTML_PALETTE:
-print(p.get_shades_of('pale blue', as_rgb=False))
-
-# and you can get the main tint:
-print(p.get_main_tint('pale blue', as_rgb=False))
-
+>>> from colorito.palette import SmartPalette
+>>> palette = SmartPalette(colors=color_list)
 ```
 
-Additionaly information are provided in the section below 
+You can provide the list of colors as either a Python List, or as the path
+to a text file, where each line of the file contains a color name. If you
+don't specify a list of colors, a default one is used.
+
+A **SmartPalette provides two main APIs**:
+
+* `search` - given a color name, it **returns colors similar to the specified 
+one**; the returned colors are retrieved from the list that was used to 
+initialize the SmartPalette.
+
+* `invent` - given a color name, it generates a `colorito.colors.Color` object, 
+which includes the color's RGB value and CIELab value. The color can be 
+visualized by calling its `render()` method.
+
+### SmartPalette.search()
+
+```python
+>>> from colorito.palette import SmartPalette
+>>> p = SmartPalette()
+>>> colors, _ = p.search('water')
+>>> colors[0].name
+INFO:colorito:data:utils: cleaning strings...
+'Blue Diamond'
+```
+
+By default, `search()` sets a similarity threshold based on the elbow method
+(by finding the point of maximum curvature in the similarity curve between
+the searched color and those provided upon initialization of the 
+SmartPalette). 
+
+However, You can manually limit search results by passing additional keyword 
+arguments to `search()`:
+
+* `search(color_name, n=10)` - returns only the top 10 colors that are the
+most similar to `color_name`;
+* `search(color_name, t=.5)` - returns only colors that have a similarity
+greater than 0.5 (50%) with respect to `color_name`;
+
+When using plain `search(color_name)`, the simil
+
+### SmartPalette.invent()
+
+```python
+>>> from colorito.palette import SmartPalette
+>>> p = SmartPalette()
+>>> color = p.invent('pink')
+>>> color.rgb
+INFO:colorito:data:utils: cleaning strings...
+(207, 130, 161)
+>>> color.hexc
+'#cf82a1'
+>>> color.lab
+(63.18214860087497, 33.85211035054453, -3.969598637729832)
+```
+
+Additional information are provided in the section below 
 ([how does it work](#how-does-it-work)).
 
 ## How Does It Work?
 
-colorito is **designed to be extensible** and **can be improved by 
-implementing new [color genies](#colorgenie) for your 
-[smart palette](#smartpalette)**
+The core of colorito is a **neural model** (developed using [PyTorch](https://www.pytorch.org)),
+that was trained to **generate color coordinates from color names**. 
+
+### Training
+The network used by colorito was trained using **almost 40k pairs** of color names - hexadecimal 
+values, that were scraped from different web sources (scraping notebooks are available in
+the [notebooks](https://github.com/kekgle/colorito/tree/master/notebooks/mining) folder).
+
+During training, the **network learns to minimize the MSE of the generated CIELab coordinates of
+a color**, starting from its name (the coordinates are normalized in the [0, 1] range). 
+The choice of working with the CIELab space rather than RGB, is due to the fact that, in the 
+former, the Euclidean Distance between colors translates better to their perceptual distance 
+(compared to the RGB space).
+
+After the network has been trained, it is used to generate 256-dimensional embeddings of colors'
+names, that are "perceptually aware" (meaning that names representing similar colors, will have
+similar embeddings).
 
 
-### SmartPalette
-The main component of colorito is called **SmartPalette**. A SmartPalette is an
-object containing a mapping between color name and rgb value. This mapping needs
-to be provided to the SmartPalette upon initialization (as the path to a csv 
-file).
+### Models
 
-The library already provides two large color mappings, that you should augment
-with the {_color name_: _color rgb_} pairs that are in your database. They can
-be imported with `from colorito import HTML_PALETTE, DEFAULT_PALETTE`.
+As of now, there are two available color generators: 
 
-You can add a color mapping to the SmartPalette with:
-```python
->>> from colorito import HTML_PALETTE
->>> from colorito.genies.knn import KNNColorGenie
->>> from colorito.palette import SmartPalette
->>> p = SmartPalette(KNNColorGenie())
->>> p.update_palette(HTML_PALETTE)
-```
+* one uses an LSTM encoder with 512 hidden unit, two layers, followed by a 512-dimensional and a 
+256-dimensional dense layers with ReLU and tanh activations respectively; this network uses unigrams,
+bigrams and trigrams feature at the character level.
 
-If you want to add multiple palettes, you can call `update_palette` again:
-```python
->>> from colorito import DEFAULT_PALETTE
->>> p.update_palette(DEFAULT_PALETTE)
-```
+* the other (dubbed Lite due to its reduced size), is composed of a 256-unit LSTM encoder, with two
+layers, that uses only character unigram features, followed by the same dense layers used by the
+"beefier" model.
 
-### ColorGenie
-The color genie is what makes the SmartPalette _smart(er)_. You can implement
-your own genies by implementing the abstract class at 
-`colorito.genies.ColorGenie`.
+You can find a notebook where training of both networks can be reproduced in the
+[notebooks](https://github.com/kekgle/colorito/tree/master/notebooks/mining) folder.
 
-For now, only the `KNNColorGenie` is available, which uses the **k-nearest
-neighbour algorithm to retrieve the most similar colors**. The distances
-between colors are computed using the _delta E 2000_ score (which is more
-perceptually accurate than simple Euclidean distance on the RGB space).
-
-The `KNNColorGenie` is very simple and **weak at inferring the rgb of a color
-that it is not in the palette**. In fact, all it does is featurize the names
-of the colors in the palette (using a bag-of-words approach) and then, given
-the name of a new color, it returns the rgb of the color in the palette with
-the highest cosine similarity.
-
-This is obviously sub-optimal as there is no real _understanding_ of the
-semantics in colors' names. For instance, if `light red` and `dark red` are
-known and we ask the ColorGenie what is the most likely rgb for `pale red`,
-the `KNNColorGenie` will assign equal probability to `light red` and `dark 
-red` as they both have the word `red` in common with `pale red`. The genie
-will not capture the higher similarity between `pale` and `light`.
-
-**Smarter approaches** that include language understanding will be
-**implemented at a later time**.
