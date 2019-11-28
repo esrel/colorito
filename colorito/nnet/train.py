@@ -103,7 +103,9 @@ def train(
     logger.info(
         f' will train for {epochs} epochs; with {batch_size}-sized '
         f'mini-batches and with a learning rate of {learning_rate} '
-        + '' if not decay else f'(decaying by {decay} per epoch...)'
+        + (
+            '' if not decay else f'(decaying by {decay} per epoch) '
+        )
     )
 
     criterion_ = nn.MSELoss()
