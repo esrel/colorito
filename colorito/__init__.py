@@ -10,8 +10,7 @@ DEFAULT_PALETTE = os.path.join(
      COLORS, 'html-colors.csv')
 
 DEFAULT_NETWORK = os.path.join(
-     MODELS, 'color-generator')
+     MODELS, 'color-generators', 'base')
 
 LITE_NETWORK = os.path.join(
-     MODELS, 'lite-colorgen'
-)
+     MODELS, 'color-generators', 'lite')

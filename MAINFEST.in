@@ -1,2 +1,3 @@
-include colorito/nnet/models/color-generator/*
+include colorito/nnet/models/color-generators/base/*
+include colorito/nnet/models/color-generators/lite/*
 include colorito/data/colors/*
