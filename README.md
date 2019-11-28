@@ -76,10 +76,8 @@ When using plain `search(color_name)`, the simil
 INFO:colorito:data:utils: cleaning strings...
 (207, 130, 161)
 >>> color.hexc
-INFO:colorito:data:utils: cleaning strings...
 '#cf82a1'
 >>> color.lab
-INFO:colorito:data:utils: cleaning strings...
 (63.18214860087497, 33.85211035054453, -3.969598637729832)
 ```
 
