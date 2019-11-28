@@ -45,7 +45,7 @@ visualized by calling its `render()` method.
 ```python
 >>> from colorito.palette import SmartPalette
 >>> p = SmartPalette()
->>> colors, simil_scores = p.search('water')
+>>> colors, _ = p.search('water')
 >>> colors[0].name
 INFO:colorito:data:utils: cleaning strings...
 'Blue Diamond'
